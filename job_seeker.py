@@ -47,7 +47,8 @@ def job_builder(line):
         "url":              _list[6],
         "title":            _list[7],
     }
-    return Job(data) 
+    return Job(data)
+
 
 
 class POC():
