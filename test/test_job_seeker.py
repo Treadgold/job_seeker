@@ -9,7 +9,7 @@ import os.path
 import tempfile
 import unittest
 
-import job_seeker
+
 
 
 class TestJobSeeker(unittest.TestCase):
@@ -133,4 +133,13 @@ class TestJobSeeker(unittest.TestCase):
         self.assertTrue(l[0] == "good line") 
       
     def test_parse_list(self):
+        pass
+
+    def test_create_new_job(self):
+        pass
+
+    def test_is_true(self):
+        self.assertTrue(job_seeker.is_true("y"))
+        self.assertTrue(job_seeker.is_true("Yes"))
+        self.assertFalse(job_seeker.is_true("No"))
         pass

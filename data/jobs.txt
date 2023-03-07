@@ -1,8 +1,12 @@
 # data/jobs.txt
 
-
-
 20230123;20230201;Fred Smythe; Some Great Place, LLC; linux, ansible, python; y; https://example.com/r12345; Senior Automation Engineer
 
 20230101; 20230101; Jason Jayson; Can't read resume, Inc; Windows server, powershell; n; https://whocares.com; Winderz admin
 
+
+
+
+20230703; 20230307; Dave; Juxtopose limited; This is a test, no empty fields; y; www.url.com; Job for Best Actor
+
+20220502; 20221002; Marty Feldman; Just boat life inc; Python, Fancy hats, Must wear a suit to work; Y; boatlife.com; Code Skipper

@@ -21,3 +21,7 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
+playing.ipynb
+test.data
+testing_args.py
+filename.txt
