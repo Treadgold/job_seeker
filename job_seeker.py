@@ -134,7 +134,7 @@ def is_yes(prompt):
 
  
 def create_new_job():
-    """ Creates a new job object and returns it as a string"""
+    """ Creates a new job from user input and appends to data file """
       
     # define the data fields and create a dict to store the data
     data = {
