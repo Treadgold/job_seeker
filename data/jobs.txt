@@ -10,3 +10,5 @@
 20230703; 20230307; Dave; Juxtopose limited; This is a test, no empty fields; y; www.url.com; Job for Best Actor
 
 20220502; 20221002; Marty Feldman; Just boat life inc; Python, Fancy hats, Must wear a suit to work; Y; boatlife.com; Code Skipper
+
+20221201; 20230202; David; Jool; Python, Javascript, Rust; Y; Jool.com; Junior Developer

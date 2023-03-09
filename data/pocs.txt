@@ -5,3 +5,7 @@ Jayne Johnson; 123.456.7890; jj@otherexample.com; Other Recruiter, LLC; 20221212
 
 Jason Jayson; br-549; jay@whocares.com; Whocares, Inc; 20230101; 20230101
  
+
+Dave; 555-5556555; dave@email.com; email.com; 20230310; 20230310; 
+
+Killian Jornet; 555-84778884; killian@boss.com; boss org; 20231003; 20231003; 

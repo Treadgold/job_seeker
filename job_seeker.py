@@ -123,30 +123,43 @@ def string_to_list(data, sep = ';'):
 def is_yes(prompt):
     """ Takes a prompt, returns True/False based on user input """
     yes_choices = ["y", "yes", "yep", "yeah", "yup", "sure", "ok", "okay"]
-    no_choices = ["n", "no", "nope", "nah", "no way", "no way jose", "nup", "no thanks"]
-    
+ 
     if prompt.lower() in yes_choices:
         return True
-    elif prompt.lower() in no_choices:
-            return False
     else:
-        return None
-
+        return False
  
-def create_new_job():
-    """ Creates a new job from user input and appends to data file """
-      
-    # define the data fields and create a dict to store the data
-    data = {
-        "last_contact":     0,
-        "first_contact":    0,
-        "poc_name":         0,
-        "company":          0,
-        "notes":            0,
-        "active":           0,
-        "url":              0,
-        "title":            0,
-    }
+ 
+def create_new_job(job_or_poc: str):
+        
+    if job_or_poc == "job":
+        
+        """ Creates a new job from user input and appends to data file """
+        
+        # define the data fields and create a dict to store the data
+        data = {
+            "last_contact":     0,
+            "first_contact":    0,
+            "poc_name":         0,
+            "company":          0,
+            "notes":            0,
+            "active":           0,
+            "url":              0,
+            "title":            0,
+        }
+    elif job_or_poc == "poc":
+        """ Creates a new POC from user input and appends to data file """
+        
+        # define the data fields and create a dict to store the data
+        data = {
+        "name":                 0,
+        "phone":                0,
+        "email":                0,
+        "company":              0,
+        "first_contact":        0,
+        "last_contact":         0, 
+        }      
+
     # get the data from the user
     # loop through each field and get the data
     for field in data:
@@ -162,34 +175,47 @@ def create_new_job():
                 continue
             else:
                 break
-    
-    # 20230123;20230201;Fred Smythe; Some Great Place, LLC; linux, ansible, python; y; https://example.com/r12345; Senior Automation Engineer
-    new_job = "{}; {}; {}; {}; {}; {}; {}; {}".format(
-            data['first_contact'],
-            data['last_contact'],
-            data['poc_name'],
-            data['company'],
-            data['notes'],
-            data['active'],
-            data['url'],
-            data['title'],
-        )
-    
+    if job_or_poc == "job":
+        # 20230123;20230201;Fred Smythe; Some Great Place, LLC; linux, ansible, python; y; https://example.com/r12345; Senior Automation Engineer
+        new_item = "{}; {}; {}; {}; {}; {}; {}; {}".format(
+                data['first_contact'],
+                data['last_contact'],
+                data['poc_name'],
+                data['company'],
+                data['notes'],
+                data['active'],
+                data['url'],
+                data['title']
+            )
+    elif job_or_poc == "poc":
+        #Jason Jayson; br-549; jay@whocares.com; Whocares, Inc; 20230101; 20230101
+        new_item = "{}; {}; {}; {}; {}; {}; ".format(
+                data["name"],
+                data["phone"],
+                data["email"],
+                data["company"],
+                data["first_contact"],
+                data["last_contact"]
+            )
+        
     # print out the new job values
-    print(new_job)
+    print(f"adding a new {job_or_poc},/n{new_item}")
     
     # Ask the user if they want to add the job
-    if is_yes(input("Add this job?")):
+    if is_yes(input(f"Add this new {job_or_poc}?")):
         try:
             # Append the new job to the job file using the append_to_file function
-            append_to_file(new_job, os.path.join(datadir, job_file))
-            print("New Job added to database")
+            if job_or_poc == "job":
+                append_to_file(new_item, os.path.join(datadir, job_file))
+            elif job_or_poc == "poc":
+                append_to_file(new_item, os.path.join(datadir, poc_file))
+            print(f"New {job_or_poc} added to database")
         except:
             print("Error writing to file")
     else:
         print("Input cancelled")
-    
-    
+        
+        
     return()
 
 
@@ -231,10 +257,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.add:
-        create_new_job()
+        # check if we are adding a job or a POC
+        if args.poc:
+            create_new_job("poc")
+        elif args.job:
+            create_new_job("job")
 
 
-    if args.job:
+    if args.job and not args.add:
         for job in parse_list(job_list, "job", args.search):
             print(job, "\n")
     
@@ -242,7 +272,7 @@ if __name__ == "__main__":
         for job in parse_list(job_list, args.search, args.search):
             print(job, "\n")       
     
-    elif args.poc:
+    elif args.poc and not args.add:
         for poc in parse_list(poc_list, "poc", args.search):
             print(poc, "\n")
 
