@@ -130,13 +130,15 @@ def is_yes(prompt):
         return False
  
  
-def create_new_job(job_or_poc: str):
-        
+def create_new_record(job_or_poc: str):
+    """ Collects user input based on either "job" or "poc" input, 
+        and creates a new record in our data file
+    """
+    
+    # define the data fields and create a dict to store the data   
     if job_or_poc == "job":
         
-        """ Creates a new job from user input and appends to data file """
-        
-        # define the data fields and create a dict to store the data
+        # data fields for a job
         data = {
             "last_contact":     0,
             "first_contact":    0,
@@ -148,9 +150,9 @@ def create_new_job(job_or_poc: str):
             "title":            0,
         }
     elif job_or_poc == "poc":
-        """ Creates a new POC from user input and appends to data file """
         
-        # define the data fields and create a dict to store the data
+        
+        # data fields for a poc
         data = {
         "name":                 0,
         "phone":                0,
@@ -175,8 +177,10 @@ def create_new_job(job_or_poc: str):
                 continue
             else:
                 break
+    
+    # Set up data for poc or job
     if job_or_poc == "job":
-        # 20230123;20230201;Fred Smythe; Some Great Place, LLC; linux, ansible, python; y; https://example.com/r12345; Senior Automation Engineer
+        # sample data line - 20230123;20230201;Fred Smythe; Some Great Place, LLC; linux, ansible, python; y; https://example.com/r12345; Senior Automation Engineer
         new_item = "{}; {}; {}; {}; {}; {}; {}; {}".format(
                 data['first_contact'],
                 data['last_contact'],
@@ -188,7 +192,7 @@ def create_new_job(job_or_poc: str):
                 data['title']
             )
     elif job_or_poc == "poc":
-        #Jason Jayson; br-549; jay@whocares.com; Whocares, Inc; 20230101; 20230101
+        # sample data line - Jason Jayson; br-549; jay@whocares.com; Whocares, Inc; 20230101; 20230101
         new_item = "{}; {}; {}; {}; {}; {}; ".format(
                 data["name"],
                 data["phone"],
@@ -198,17 +202,21 @@ def create_new_job(job_or_poc: str):
                 data["last_contact"]
             )
         
-    # print out the new job values
+    # print out the new records values
+    # and the type of record we are creating
     print(f"adding a new {job_or_poc},/n{new_item}")
     
     # Ask the user if they want to add the job
     if is_yes(input(f"Add this new {job_or_poc}?")):
         try:
-            # Append the new job to the job file using the append_to_file function
+            # Check if POC or Job
             if job_or_poc == "job":
+                # Append the new job to the job file using the append_to_file function
                 append_to_file(new_item, os.path.join(datadir, job_file))
             elif job_or_poc == "poc":
+                # Append the new poc to the poc file using the append_to_file function
                 append_to_file(new_item, os.path.join(datadir, poc_file))
+            # confirm the new record was added
             print(f"New {job_or_poc} added to database")
         except:
             print("Error writing to file")
@@ -259,9 +267,9 @@ if __name__ == "__main__":
     if args.add:
         # check if we are adding a job or a POC
         if args.poc:
-            create_new_job("poc")
+            create_new_record("poc")
         elif args.job:
-            create_new_job("job")
+            create_new_record("job")
 
 
     if args.job and not args.add:
