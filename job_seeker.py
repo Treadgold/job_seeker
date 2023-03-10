@@ -280,8 +280,14 @@ if __name__ == "__main__":
         for job in parse_list(job_list, args.search, args.search):
             print(job, "\n")       
     
-    elif args.poc and not args.add:
+    if args.poc and not args.add:
         for poc in parse_list(poc_list, "poc", args.search):
             print(poc, "\n")
 
+    # allow name search in POC and Job
+    if args.name:
+        for poc in parse_list(poc_list, "poc", args.name):
+            print("poc - ", poc, "\n")
+        for job in parse_list(job_list, "job", args.name):
+            print("job - ", job, "\n")
 
