@@ -1,21 +1,20 @@
 # name    :	tests/test_job_seeker.py
-# version :	0.0.1
-# date    :	20230203
-# author  :	Leam Hall
+# version :	0.0.2
+# date    :	20230317
+# author  :	Michael Treadgold
 # desc    :	Test job_seeker.py
-
-from datetime import datetime as dt
+import unittest
 import os.path
 import tempfile
-import unittest
+from datetime import datetime as dt
 
 import job_seeker
-
 
 class TestJobSeeker(unittest.TestCase):
 
     def setUp(self):
         self.job_data_1 = {
+            "record_number":    "1",
             "last_contact":     "20230123",
             "first_contact":    "20230201",
             "poc_name":         "Fred Smythe",
@@ -27,6 +26,7 @@ class TestJobSeeker(unittest.TestCase):
         }
 
         self.poc_data_1 = {
+            "record_number":    "1",
             "name":     "Fred Smythe",
             "phone":    "555.555.1212",
             "email":    "fred@example.com",
@@ -36,6 +36,7 @@ class TestJobSeeker(unittest.TestCase):
         }
 
         self.job_data_2 = {
+            "record_number":    "2",
             "last_contact":     "20230123",
             "first_contact":    "20230201",
             "poc_name":         "Jason Jayson",
@@ -47,6 +48,7 @@ class TestJobSeeker(unittest.TestCase):
         }
 
         self.poc_data_2 = {
+            "record_number":    "2",
             "name":     "Jason Jayson",
             "phone":    "br-549",
             "email":    "jay@whocares.com",
@@ -86,6 +88,7 @@ class TestJobSeeker(unittest.TestCase):
 
     def test_job_data(self):
         j = job_seeker.Job(self.job_data_1)
+        self.assertTrue(j.record_number == "1")
         self.assertTrue(j.last_contact  == "20230123")
         self.assertTrue(j.first_contact == "20230201")
         self.assertTrue(j.poc_name      == "Fred Smythe")
@@ -96,9 +99,9 @@ class TestJobSeeker(unittest.TestCase):
         self.assertTrue(j.title         == "Senior Automation Engineer")
 
     def test_job_builder(self):
-        job_line = "20230123;20230201;Fred Smythe; Some Great Place, LLC; linux, ansible, python; y; https://example.com/r12345; Senior Automation Engineer"
+        job_line = "2; Automation Engineer; Yes; Excel, Python, Bash, VBA; sprint; sprint.com; Ulysees; 2023; 2023"
         job = job_seeker.job_builder(job_line)
-        self.assertTrue(job.title == "Senior Automation Engineer")
+        self.assertTrue(job.title == "Automation Engineer")
 
     def test_poc_defaults(self):
         p       = job_seeker.POC()
@@ -112,6 +115,7 @@ class TestJobSeeker(unittest.TestCase):
     
     def test_poc_data(self):
         p   = job_seeker.POC(self.poc_data_1)
+        self.assertTrue(p.record_number == "1")
         self.assertTrue(p.name          == "Fred Smythe")
         self.assertTrue(p.phone         == "555.555.1212")
         self.assertTrue(p.email         == "fred@example.com")             
@@ -122,10 +126,8 @@ class TestJobSeeker(unittest.TestCase):
     def test_poc_string(self):
         p       = job_seeker.POC(self.poc_data_1)
         results = p.__str__().split("\n")
-        self.assertTrue(results[0] == 
-            "Fred Smythe, (555.555.1212) fred@example.com  [Example, Inc]")
-        self.assertTrue(results[1] ==
-            "First Contact: 20230123, Last Contact: 20230201")
+        self.assertTrue(results[0] == "record_number: 1")
+        self.assertTrue(results[1] == "name: Fred Smythe")
        
     def test_list_from_file(self):
         l = job_seeker.list_from_file(self.data_file)
@@ -142,4 +144,4 @@ class TestJobSeeker(unittest.TestCase):
         self.assertTrue(job_seeker.is_yes("y"))
         self.assertTrue(job_seeker.is_yes("Yes"))
         self.assertFalse(job_seeker.is_yes("No"))
-        pass
+        self.assertFalse(job_seeker.is_yes("n"))
