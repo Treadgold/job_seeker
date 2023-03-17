@@ -241,6 +241,9 @@ def update_record(job_or_poc: str, record_number: str):
     print("; ".join(current_record))
 
     for idx, field in enumerate(fields):
+        # skip the record number field
+        if field == "record_number":
+            continue
         while True:
             user_input = input(f"{field} (current: {current_record[idx]}): ")
             if user_input == "":
