@@ -320,6 +320,7 @@ if __name__ == "__main__":
             create_new_record("poc")
         elif args.job:
             create_new_record("job")
+        sys.exit(1)
             
     if args.delete:
         if args.poc:
@@ -328,30 +329,36 @@ if __name__ == "__main__":
             delete_record("job", args.record)
         else:
             print("Please specify -j for Job or -p for POC when using the --delete option.")
-
+        sys.exit(1)
 
     if args.update:
         if args.poc:
             update_record("poc", args.record)
         elif args.job:
             update_record("job", args.record)
-
+        sys.exit(1)
+        
     if args.job and not args.add and not args.update:
         for job in parse_list(job_list, "job", args.search):
             print(job, "\n")
-    
+        sys.exit(1)
+        
     if args.search and not args.add and not args.update and not args.job and not args.poc:
         for job in parse_list(job_list, "job", args.search):
             print(job, "\n")
+        sys.exit(1)
 
+    
     if args.poc and not args.add and not args.update:
         for poc in parse_list(poc_list, "poc", args.search):
             print(poc, "\n")
-
+        sys.exit(1)
+        
     # allow name search in POC and Job
     if args.name:
         for poc in parse_list(poc_list, "poc", args.name):
             print("poc - ", poc, "\n")
         for job in parse_list(job_list, "job", args.name):
             print("job - ", job, "\n")
-
+        sys.exit(1)
+        
