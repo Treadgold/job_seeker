@@ -90,11 +90,9 @@ def list_from_file(filename):
 def is_yes(prompt):
     """ Takes a prompt, returns True/False based on user input """
     yes_choices = ["y", "yes", "yep", "yeah", "yup", "sure", "ok", "okay"]
- 
-    if prompt.lower() in yes_choices:
-        return True
-    else:
-        return False
+    return prompt.lower() in yes_choices
+         
+    
     
 
 def convert_date(date):
@@ -133,7 +131,7 @@ def string_to_list(data, sep = ';'):
     """ Takes a sep separated string and converts it to a list """ 
     return [ e.strip() for e in data.split(sep) ]
 
-def create_new_record(job_or_poc: str):
+def create_new_record(job_or_poc):
     """ Collects user input based on either "job" or "poc" input, 
         and creates a new record in our data file
     """
@@ -183,7 +181,30 @@ def create_new_record(job_or_poc: str):
         
     return()
 
-def get_next_record_number(job_or_poc: str) -> int:
+# def get_next_record_number(job_or_poc: str) -> int:
+#     """Get the next record number for a job or POC."""
+    
+#     def process_records(lines: List[str], record_builder: Callable) -> List[int]:
+#         """Process records and return a list of record numbers."""
+#         return [int(record_builder(line).record_number) for line in lines]
+
+#     # Determine the file and record builder based on job_or_poc
+#     file, record_builder = (
+#         (job_file, job_builder) if job_or_poc == "job" else (poc_file, poc_builder)
+#     )
+
+#     # Read lines from the data file
+#     lines = list_from_file(os.path.join(datadir, file))
+
+#     # Process records and get record numbers
+#     record_numbers = process_records(lines, record_builder)
+
+#     # Find the maximum record number, or use 0 if the list is empty
+#     max_record_number = max(record_numbers, default=0)
+
+#     return max_record_number + 1
+
+def get_next_record_number(job_or_poc):
     """ Get the next record number for a job or POC """
 
      # Check whether we are working with job or POC records
@@ -221,7 +242,7 @@ def get_next_record_number(job_or_poc: str) -> int:
 
 
 
-def update_record(job_or_poc: str, record_number: str):
+def update_record(job_or_poc, record_number):
     """ Update an existing job or POC record """
     updated_data = {}
     fields = JOB_FIELDS if job_or_poc == "job" else POC_FIELDS
@@ -266,7 +287,7 @@ def update_record(job_or_poc: str, record_number: str):
     else:
         print("Update cancelled")
 
-def delete_record(job_or_poc: str, record_number: str):
+def delete_record(job_or_poc, record_number):
     """ Delete an existing job or POC record """
     filepath = os.path.join(datadir, job_file) if job_or_poc == "job" else os.path.join(datadir, poc_file)
     
