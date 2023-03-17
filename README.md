@@ -9,9 +9,12 @@ Tracks job applications and contacts
 
 - Given -r `req number`, print out that job request
 - Given -p `POC name`, prints out that Point of Contact
-- [TODO] Given -a, and -r or -p, and data, adds to the end of the file
+- Given -a, and -r or -p, and data, adds to the end of the file
 - Given -r or -p, and -s `string`, searches the relevant file and prints 
-    any job or poc that matches `string`
+            any job or poc that matches `string`
+- Given -u and -j or -p and -r <record number> allows you to update a record
+- Given -d and -r or -p and -r <record number> allows you to delete a record
+
 - - An empty `string` prints all jobs or pocs
 - - Not really going to use wildcards or regexs yet
     
@@ -21,33 +24,50 @@ Tracks job applications and contacts
 
 ```
 ./job_seeker.py -p
-Fred Smythe, (555.555.1212) fred@example.com  [Example, Inc]
-First Contact: 20230123, Last Contact: 20202102 
+record_number: 1
+name: Frank Green Zappa
+company: United Music Federation
+phone: 0225 666 444
+email: zappa@UMF.com
+first_contact: 2023
+last_contact: 2023
 
-Jayne Johnson, (123.456.7890) jj@otherexample.com  [Other Recruiter, LLC]
-First Contact: 20221212, Last Contact: 20221212 
+record_number: 2
+name: Killian
+company: Run Fast
+phone: 8666544646
+email: kill@run.com
+first_contact: 2023
+last_contact: 2023
 
-Jason Jayson, (br-549) jay@whocares.com  [Whocares, Inc]
-First Contact: 20230101, Last Contact: 20230101
 ```
 
 ### Find a specific contact's info
 
 ```
-./job_seeker.py -p -s smythe
-Fred Smythe, (555.555.1212) fred@example.com  [Example, Inc]
-First Contact: 20230123, Last Contact: 20202102
+./job_seeker.py -p -s shannon
+record_number: 3
+name: Shannon Docherty
+company: JustInTime
+phone: 545488844
+email: shannon@JIT.com
+first_contact: 2023
+last_contact: 2023
 ```
 
 ### Find jobs that mention linux
 
 ```
 ./job_seeker.py -j -s linux
-Senior Automation Engineer
-Active: y  Notes: linux, ansible, python
-Some Great Place, LLC,  https://example.com/r12345
-Fred Smythe 
-Last chat: 20230123, First chat: 20230201
+record_number: 4
+title: Linux Server Admin
+active: Yes
+notes: Arch, Redhat, NGIX, docker
+company: Company number 7
+url: comp7.com
+poc_name: Martin Freeman
+last_contact: 20230314
+first_contact: 20230112
 ```
 
 
