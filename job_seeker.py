@@ -340,7 +340,7 @@ if __name__ == "__main__":
         for job in parse_list(job_list, "job", args.search):
             print(job, "\n")
     
-    if args.search:
+    if args.search and not args.add and not args.update and not args.job and not args.poc:
         for job in parse_list(job_list, "job", args.search):
             print(job, "\n")
 
