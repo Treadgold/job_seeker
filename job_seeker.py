@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # name:     job_seeker.py
-# version:  0.1.1
+# version:  0.1.2
 # date:     20230316
-# author:   Leam Hall
+# author:   Leam Hall, Michael Treadgold
 # desc:     Track data on job applications
 
 import argparse
