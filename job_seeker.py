@@ -38,10 +38,9 @@ POC_FIELDS = [
 class Job:
     """Stores the job req data"""
 
-    def __init__(self, job_data=None):
+    def __init__(self, job_data={}):
         
-        if job_data is None:
-            job_data = {}
+
         for field in JOB_FIELDS:
             setattr(self, field, job_data.get(field, None))
 
@@ -59,9 +58,8 @@ class Job:
 class POC:
     """Stores the contact info for each Point of Contact"""
 
-    def __init__(self, data=None):
-        if data is None:
-            data = {}
+    def __init__(self, data={}):
+
         for field in POC_FIELDS:
             setattr(self, field, data.get(field, None))
 
@@ -99,16 +97,17 @@ def convert_date(date):
     """ Takes a datetime.datetime object and returns a YYYMMDD string """
     return "{}{:0>2}{:0>2}".format(date.year, date.month, date.day)
 
-def job_builder(line):
+def builder(line, _list_type):
+    
     _list = string_to_list(line)
-    data = {field: _list[idx] for idx, field in enumerate(JOB_FIELDS)}
+    
+    if _list_type == "job":
+        _fields = JOB_FIELDS
+    else:
+        _fields = POC_FIELDS
+        
+    data = {field: _list[idx] for idx, field in enumerate(_fields)}
     return Job(data)
-
-
-def poc_builder(line):
-    _list = string_to_list(line)
-    data = {field: _list[idx] for idx, field in enumerate(POC_FIELDS)}
-    return POC(data)
 
 
 def parse_list(_list, _list_type, search):
@@ -116,10 +115,8 @@ def parse_list(_list, _list_type, search):
     items = [] 
     for element in _list:
         if search.lower() in element.lower():
-            if _list_type == "poc":
-                items.append(poc_builder(element))
-            if _list_type == "job":
-                items.append(job_builder(element))
+            items.append(builder(element, _list_type))
+
     return items
 
 def append_to_file(line, filename):
@@ -181,63 +178,32 @@ def create_new_record(job_or_poc):
         
     return()
 
-# def get_next_record_number(job_or_poc: str) -> int:
-#     """Get the next record number for a job or POC."""
-    
-#     def process_records(lines: List[str], record_builder: Callable) -> List[int]:
-#         """Process records and return a list of record numbers."""
-#         return [int(record_builder(line).record_number) for line in lines]
-
-#     # Determine the file and record builder based on job_or_poc
-#     file, record_builder = (
-#         (job_file, job_builder) if job_or_poc == "job" else (poc_file, poc_builder)
-#     )
-
-#     # Read lines from the data file
-#     lines = list_from_file(os.path.join(datadir, file))
-
-#     # Process records and get record numbers
-#     record_numbers = process_records(lines, record_builder)
-
-#     # Find the maximum record number, or use 0 if the list is empty
-#     max_record_number = max(record_numbers, default=0)
-
-#     return max_record_number + 1
 
 def get_next_record_number(job_or_poc):
     """ Get the next record number for a job or POC """
 
      # Check whether we are working with job or POC records
+     # and get the list of records from the appropriate file
     if job_or_poc == "job":
-        # Read lines from the job data file
         lines = list_from_file(os.path.join(datadir, job_file))
-        # Initialize an empty list to store job records
         records = []
-        # Iterate through each line from the job data file
         for line in lines:
-            # Create a job record from the line and append it to the records list
-            records.append(job_builder(line))
+            records.append(builder(line, "job"))
     elif job_or_poc == "poc":
-        # Read lines from the POC data file
         lines = list_from_file(os.path.join(datadir, poc_file))
-        # Initialize an empty list to store POC records
         records = []
-        # Iterate through each line from the POC data file
         for line in lines:
-            # Create a POC record from the line and append it to the records list
-            records.append(poc_builder(line))
-
-    # Initialize an empty list to store record numbers
-    record_numbers = []
+            records.append(builder(line, "poc"))
 
     # Iterate through each record in the records list
+    # and get the record number for each record
+    record_numbers = []
     for record in records:
-        # Convert the record number to an integer and append it to the record_numbers list
         record_numbers.append(int(record.record_number))
 
-    # Find the maximum record number in the record_numbers list, or use 0 if the list is empty
+    # Get the max record number from the list of record numbers
+    # and return the max record number + 1
     max_record_number = max(record_numbers, default=0)
-
     return max_record_number + 1
 
 
@@ -324,6 +290,7 @@ if __name__ == "__main__":
         print("Can't find the data files")
         sys.exit(1)
 
+
     parser = argparse.ArgumentParser()
     parser.add_argument("-a", "--add", help="add data, requires -j or -p", action="store_true")
     parser.add_argument("-j", "--job", help="use the Job info", action="store_true")
@@ -341,8 +308,10 @@ if __name__ == "__main__":
             create_new_record("poc")
         elif args.job:
             create_new_record("job")
-        sys.exit(1)
-            
+        else:
+            print("Please specify -j for Job or -p for POC when using the --add option.")
+            sys.exit(1)
+
     if args.delete:
         if args.poc:
             delete_record("poc", args.record)
@@ -357,29 +326,90 @@ if __name__ == "__main__":
             update_record("poc", args.record)
         elif args.job:
             update_record("job", args.record)
+        else:
+            print("Please specify -j for Job or -p for POC when using the --update option.")
         sys.exit(1)
-        
-    if args.job and not args.add and not args.update:
-        for job in parse_list(job_list, "job", args.search):
-            print(job, "\n")
-        sys.exit(1)
-        
-    if args.search and not args.add and not args.update and not args.job and not args.poc:
+
+    if args.job and not (args.add or args.update):
         for job in parse_list(job_list, "job", args.search):
             print(job, "\n")
         sys.exit(1)
 
-    
-    if args.poc and not args.add and not args.update:
+    if args.search and not (args.add or args.update or args.job or args.poc):
+        for job in parse_list(job_list, "job", args.search):
+            print(job, "\n")
+        sys.exit(1)
+
+    if args.poc and not (args.add or args.update):
         for poc in parse_list(poc_list, "poc", args.search):
             print(poc, "\n")
         sys.exit(1)
-        
-    # allow name search in POC and Job
+
     if args.name:
         for poc in parse_list(poc_list, "poc", args.name):
             print("poc - ", poc, "\n")
         for job in parse_list(job_list, "job", args.name):
             print("job - ", job, "\n")
         sys.exit(1)
+
+
+
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument("-a", "--add", help="add data, requires -j or -p", action="store_true")
+    # parser.add_argument("-j", "--job", help="use the Job info", action="store_true")
+    # parser.add_argument("-p", "--poc", help="use the POC info", action="store_true")
+    # parser.add_argument("-s", "--search", help="SEARCH for", default="")
+    # parser.add_argument("-name", "--name", help="POC name", default="")
+    # parser.add_argument("-u", "--update", help="update data, requires -j or -p and record number", action="store_true")
+    # parser.add_argument("-r", "--record", help="record number for update", default="")
+    # parser.add_argument("-d", "--delete", help="delete data, requires -j or -p and record number", action="store_true")
+
+    # args = parser.parse_args()
+
+    # if args.add:
+    #     if args.poc:
+    #         create_new_record("poc")
+    #     elif args.job:
+    #         create_new_record("job")
+    #     sys.exit(1)
+            
+    # if args.delete:
+    #     if args.poc:
+    #         delete_record("poc", args.record)
+    #     elif args.job:
+    #         delete_record("job", args.record)
+    #     else:
+    #         print("Please specify -j for Job or -p for POC when using the --delete option.")
+    #     sys.exit(1)
+
+    # if args.update:
+    #     if args.poc:
+    #         update_record("poc", args.record)
+    #     elif args.job:
+    #         update_record("job", args.record)
+    #     sys.exit(1)
+        
+    # if args.job and not args.add and not args.update:
+    #     for job in parse_list(job_list, "job", args.search):
+    #         print(job, "\n")
+    #     sys.exit(1)
+        
+    # if args.search and not args.add and not args.update and not args.job and not args.poc:
+    #     for job in parse_list(job_list, "job", args.search):
+    #         print(job, "\n")
+    #     sys.exit(1)
+
+    
+    # if args.poc and not args.add and not args.update:
+    #     for poc in parse_list(poc_list, "poc", args.search):
+    #         print(poc, "\n")
+    #     sys.exit(1)
+        
+    # # allow name search in POC and Job
+    # if args.name:
+    #     for poc in parse_list(poc_list, "poc", args.name):
+    #         print("poc - ", poc, "\n")
+    #     for job in parse_list(job_list, "job", args.name):
+    #         print("job - ", job, "\n")
+    #     sys.exit(1)
         

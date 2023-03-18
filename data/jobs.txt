@@ -2,3 +2,5 @@
 3; Junior Developer; Yes; PYthon, Javascript, Kubernetes, Docker; localcompany; local.comp.com; James Battersey; 2023; 2023
 
 4; Linux Server Admin; Yes; Arch, Redhat, NGIX, docker; Company number 7; comp7.com; Martin Freeman; 20230314; 20230112
+
+5; LEad Deve; Yes; Python; Happy Cow Dev Ltd; HCDL; Julian Bishop; 2023; 2023
