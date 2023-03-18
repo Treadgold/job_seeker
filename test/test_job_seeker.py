@@ -98,9 +98,9 @@ class TestJobSeeker(unittest.TestCase):
         self.assertTrue(j.url           == "https://example.com/r12345")
         self.assertTrue(j.title         == "Senior Automation Engineer")
 
-    def test_job_builder(self):
+    def test_builder(self):
         job_line = "2; Automation Engineer; Yes; Excel, Python, Bash, VBA; sprint; sprint.com; Ulysees; 2023; 2023"
-        job = job_seeker.job_builder(job_line)
+        job = job_seeker.builder(job_line, "job")
         self.assertTrue(job.title == "Automation Engineer")
 
     def test_poc_defaults(self):
