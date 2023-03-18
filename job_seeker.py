@@ -37,10 +37,7 @@ POC_FIELDS = [
 
 class Job:
     """Stores the job req data"""
-
     def __init__(self, job_data={}):
-        
-
         for field in JOB_FIELDS:
             setattr(self, field, job_data.get(field, None))
 
@@ -49,10 +46,10 @@ class Job:
         self.last_contact = job_data.get("last_contact", convert_date(dt.now()))
         self.first_contact = job_data.get("first_contact", convert_date(dt.now()))
 
+
     def __str__(self):
         field_values = ["{}: {}".format(field, getattr(self, field)) for field in JOB_FIELDS]
         return "\n".join(field_values)
-
 
 
 class POC:
@@ -73,7 +70,6 @@ class POC:
         return "\n".join(field_values)
     
 
-
 def list_from_file(filename):
     """Takes a file, removes comments/empty lines, and returns a list of each line."""
     lines = []
@@ -89,13 +85,12 @@ def is_yes(prompt):
     """ Takes a prompt, returns True/False based on user input """
     yes_choices = ["y", "yes", "yep", "yeah", "yup", "sure", "ok", "okay"]
     return prompt.lower() in yes_choices
-         
-    
-    
+
 
 def convert_date(date):
     """ Takes a datetime.datetime object and returns a YYYMMDD string """
     return "{}{:0>2}{:0>2}".format(date.year, date.month, date.day)
+
 
 def builder(line, _list_type):
     
@@ -116,17 +111,19 @@ def parse_list(_list, _list_type, search):
     for element in _list:
         if search.lower() in element.lower():
             items.append(builder(element, _list_type))
-
     return items
+
 
 def append_to_file(line, filename):
     """ Takes a line and a filename, appends the line to the file """
     with open(filename, 'a') as f:
         f.write("\n" + line + "\n")
+
         
 def string_to_list(data, sep = ';'):
     """ Takes a sep separated string and converts it to a list """ 
     return [ e.strip() for e in data.split(sep) ]
+
 
 def create_new_record(job_or_poc):
     """ Collects user input based on either "job" or "poc" input, 
@@ -207,7 +204,6 @@ def get_next_record_number(job_or_poc):
     return max_record_number + 1
 
 
-
 def update_record(job_or_poc, record_number):
     """ Update an existing job or POC record """
     updated_data = {}
@@ -253,6 +249,7 @@ def update_record(job_or_poc, record_number):
     else:
         print("Update cancelled")
 
+
 def delete_record(job_or_poc, record_number):
     """ Delete an existing job or POC record """
     filepath = os.path.join(datadir, job_file) if job_or_poc == "job" else os.path.join(datadir, poc_file)
@@ -277,6 +274,9 @@ def delete_record(job_or_poc, record_number):
         print(f"{job_or_poc.capitalize()} deleted")
     else:
         print("Deletion cancelled")
+
+
+
 
 if __name__ == "__main__":
 
