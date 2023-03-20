@@ -21,7 +21,7 @@ JOB_FIELDS = [
     "url",
     "poc_name",
     "last_contact",
-    "first_contact",
+    "first_contact"
 ]
 
 POC_FIELDS = [
@@ -31,7 +31,7 @@ POC_FIELDS = [
     "phone",
     "email",
     "first_contact",
-    "last_contact",
+    "last_contact"
 ]
 
 
@@ -102,14 +102,18 @@ def builder(line, _list_type):
         _fields = POC_FIELDS
         
     data = {field: _list[idx] for idx, field in enumerate(_fields)}
-    return Job(data)
+    if _list_type == "job":
+        return Job(data)
+    else:
+        return POC(data)
+    
 
 
 def parse_list(_list, _list_type, search):
     """ Takes a list, and the element type, and prints any that match search """
-    items = [] 
+    items = []
     for element in _list:
-        if search.lower() in element.lower():
+        if search.lower() in element.lower() or search == "":
             items.append(builder(element, _list_type))
     return items
 
@@ -140,6 +144,13 @@ def create_new_record(job_or_poc):
             data[field] = record_number
         else:
             while True:
+                if field == "first_contact" or field == "last_contact":
+                    data[field] = convert_date(dt.now())
+                    print(f"(press enter to accept {data[field]} as {field})")
+                    _input = input("or provide a date in YYYYMMDD format :")
+                    if _input != "":
+                        data[field] = _input
+                    break
                 data[field] = input("{}: ".format(field))
                 if data[field] == "":
                     data[field] = "Null"
@@ -157,7 +168,17 @@ def create_new_record(job_or_poc):
     print(f"adding a new {job_or_poc},\n{new_item}")
     
     # Ask the user if they want to add the job
-    if is_yes(input(f"Add this new {job_or_poc}?")):
+    while _answer != "":
+        _answer = input("Add this record? (y/n): ")
+        if is_yes(_answer) and _answer != "":
+            _answer = True
+            break
+        elif is_yes(_answer) == False and _answer != "":
+            _answer = False
+            break
+        print("Please answer the question")
+            
+    if _answer == True:
         try:
             # Check if POC or Job
             if job_or_poc == "job":
@@ -226,9 +247,11 @@ def update_record(job_or_poc, record_number):
     for idx, field in enumerate(fields):
         # skip the record number field
         if field == "record_number":
+            updated_data[field] = current_record[idx]
             continue
         while True:
-            user_input = input(f"{field} (current: {current_record[idx]}): ")
+            print(f"(press enter to keep current {field}")
+            user_input = input(f": {current_record[idx]} ->")
             if user_input == "":
                 updated_data[field] = current_record[idx]
                 break
@@ -240,8 +263,21 @@ def update_record(job_or_poc, record_number):
                 break
 
     updated_item = "; ".join([str(updated_data[field]) for field in fields])
-
-    if is_yes(input(f"Update this {job_or_poc}?")):
+    
+    # Ask the user if they want to update the record
+    while True:
+        print(f"Updated {job_or_poc}:")
+        print(updated_item)
+        _answer = input("Update this Record? (y/n): ")
+        if is_yes(_answer) and _answer != "":
+            _answer = True
+            break
+        elif is_yes(_answer) == False and _answer != "":
+            _answer = False
+            break
+        print("Please answer the question")
+            
+    if _answer == True:
         records[i] = updated_item
         with open(filepath, 'w') as f:
             f.write("\n".join(records))
@@ -276,8 +312,6 @@ def delete_record(job_or_poc, record_number):
         print("Deletion cancelled")
 
 
-
-
 if __name__ == "__main__":
 
     datadir     = "data"
@@ -289,6 +323,19 @@ if __name__ == "__main__":
     except:
         print("Can't find the data files")
         sys.exit(1)
+    
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-a", "--add", help="add data, requires -j or -p", action="store_true")
+    parser.add_argument("-j", "--job", help="use the Job info", action="store_true")
+    parser.add_argument("-p", "--poc", help="use the POC info", action="store_true")
+    parser.add_argument("-s", "--search", help="SEARCH for", default="")
+    parser.add_argument("-name", "--name", help="POC name", default="")
+    parser.add_argument("-u", "--update", help="update data, requires -j or -p and record number", action="store_true")
+    parser.add_argument("-r", "--record", help="record number for update", default="")
+    parser.add_argument("-d", "--delete", help="delete data, requires -j or -p and record number", action="store_true")
+
+    args = parser.parse_args()
 
 
     parser = argparse.ArgumentParser()
@@ -308,10 +355,8 @@ if __name__ == "__main__":
             create_new_record("poc")
         elif args.job:
             create_new_record("job")
-        else:
-            print("Please specify -j for Job or -p for POC when using the --add option.")
-            sys.exit(1)
-
+        sys.exit(1)
+            
     if args.delete:
         if args.poc:
             delete_record("poc", args.record)
@@ -326,90 +371,38 @@ if __name__ == "__main__":
             update_record("poc", args.record)
         elif args.job:
             update_record("job", args.record)
-        else:
-            print("Please specify -j for Job or -p for POC when using the --update option.")
         sys.exit(1)
-
-    if args.job and not (args.add or args.update):
+        
+    if args.job:
         for job in parse_list(job_list, "job", args.search):
             print(job, "\n")
         sys.exit(1)
-
-    if args.search and not (args.add or args.update or args.job or args.poc):
+        
+    if args.search:
+        found = 0
         for job in parse_list(job_list, "job", args.search):
             print(job, "\n")
-        sys.exit(1)
-
-    if args.poc and not (args.add or args.update):
+            found += 1
         for poc in parse_list(poc_list, "poc", args.search):
             print(poc, "\n")
+            found += 1
+        if found == 0:
+            print("No matches found")
         sys.exit(1)
 
+    
+    if args.poc:
+        print(f"args = {args.search}", "\n")
+        for poc in parse_list(poc_list, "poc", args.search):
+            
+            print(poc, "\n")
+        sys.exit(1)
+        
+    # allow name search in POC and Job
     if args.name:
         for poc in parse_list(poc_list, "poc", args.name):
             print("poc - ", poc, "\n")
         for job in parse_list(job_list, "job", args.name):
             print("job - ", job, "\n")
         sys.exit(1)
-
-
-
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument("-a", "--add", help="add data, requires -j or -p", action="store_true")
-    # parser.add_argument("-j", "--job", help="use the Job info", action="store_true")
-    # parser.add_argument("-p", "--poc", help="use the POC info", action="store_true")
-    # parser.add_argument("-s", "--search", help="SEARCH for", default="")
-    # parser.add_argument("-name", "--name", help="POC name", default="")
-    # parser.add_argument("-u", "--update", help="update data, requires -j or -p and record number", action="store_true")
-    # parser.add_argument("-r", "--record", help="record number for update", default="")
-    # parser.add_argument("-d", "--delete", help="delete data, requires -j or -p and record number", action="store_true")
-
-    # args = parser.parse_args()
-
-    # if args.add:
-    #     if args.poc:
-    #         create_new_record("poc")
-    #     elif args.job:
-    #         create_new_record("job")
-    #     sys.exit(1)
-            
-    # if args.delete:
-    #     if args.poc:
-    #         delete_record("poc", args.record)
-    #     elif args.job:
-    #         delete_record("job", args.record)
-    #     else:
-    #         print("Please specify -j for Job or -p for POC when using the --delete option.")
-    #     sys.exit(1)
-
-    # if args.update:
-    #     if args.poc:
-    #         update_record("poc", args.record)
-    #     elif args.job:
-    #         update_record("job", args.record)
-    #     sys.exit(1)
-        
-    # if args.job and not args.add and not args.update:
-    #     for job in parse_list(job_list, "job", args.search):
-    #         print(job, "\n")
-    #     sys.exit(1)
-        
-    # if args.search and not args.add and not args.update and not args.job and not args.poc:
-    #     for job in parse_list(job_list, "job", args.search):
-    #         print(job, "\n")
-    #     sys.exit(1)
-
-    
-    # if args.poc and not args.add and not args.update:
-    #     for poc in parse_list(poc_list, "poc", args.search):
-    #         print(poc, "\n")
-    #     sys.exit(1)
-        
-    # # allow name search in POC and Job
-    # if args.name:
-    #     for poc in parse_list(poc_list, "poc", args.name):
-    #         print("poc - ", poc, "\n")
-    #     for job in parse_list(job_list, "job", args.name):
-    #         print("job - ", job, "\n")
-    #     sys.exit(1)
         

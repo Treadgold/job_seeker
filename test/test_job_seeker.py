@@ -137,7 +137,9 @@ class TestJobSeeker(unittest.TestCase):
     def test_parse_list(self):
         pass
 
-    def test_create_new_job(self):
+    def test_create_new_record(self):
+        
+        
         pass
 
     def test_is_yes(self):
