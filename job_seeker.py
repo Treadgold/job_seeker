@@ -88,7 +88,7 @@ def is_yes(prompt):
 
 
 def convert_date(date):
-    """ Takes a datetime.datetime object and returns a YYYMMDD string """
+    """ Takes a datetime.datetime object and returns a YYYYMMDD string """
     return "{}{:0>2}{:0>2}".format(date.year, date.month, date.day)
 
 
