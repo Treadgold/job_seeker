@@ -166,10 +166,12 @@ def create_new_record(job_or_poc):
     # print out the new records values
     # and the type of record we are creating
     print(f"adding a new {job_or_poc},\n{new_item}")
-    
+    _answer = " "
     # Ask the user if they want to add the job
-    while _answer != "":
-        _answer = input("Add this record? (y/n): ")
+    while True:
+        print(f"Updated {job_or_poc}:")
+        print(new_item)
+        _answer = input("Update this Record? (y/n): ")
         if is_yes(_answer) and _answer != "":
             _answer = True
             break
