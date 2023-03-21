@@ -364,7 +364,13 @@ if __name__ == "__main__":
         
     if args.job:
         for job in parse_list(job_list, "job", args.search):
-            print(job, "\n")
+            print("Jobs\n", job, "\n")
+        sys.exit(1)
+    
+    if args.poc:
+        print(f"args = {args.search}", "\n")
+        for poc in parse_list(poc_list, "poc", args.search):
+            print("Person of Concerns\n", poc, "\n")
         sys.exit(1)
         
     if args.search:
@@ -379,15 +385,6 @@ if __name__ == "__main__":
             print("No matches found")
         sys.exit(1)
 
-    
-    if args.poc:
-        print(f"args = {args.search}", "\n")
-        for poc in parse_list(poc_list, "poc", args.search):
-            
-            print(poc, "\n")
-        sys.exit(1)
-        
-    # allow name search in POC and Job
     if args.name:
         for poc in parse_list(poc_list, "poc", args.name):
             print("poc - ", poc, "\n")
