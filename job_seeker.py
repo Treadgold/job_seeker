@@ -339,19 +339,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-a", "--add", help="add data, requires -j or -p", action="store_true")
-    parser.add_argument("-j", "--job", help="use the Job info", action="store_true")
-    parser.add_argument("-p", "--poc", help="use the POC info", action="store_true")
-    parser.add_argument("-s", "--search", help="SEARCH for", default="")
-    parser.add_argument("-name", "--name", help="POC name", default="")
-    parser.add_argument("-u", "--update", help="update data, requires -j or -p and record number", action="store_true")
-    parser.add_argument("-r", "--record", help="record number for update", default="")
-    parser.add_argument("-d", "--delete", help="delete data, requires -j or -p and record number", action="store_true")
-
-    args = parser.parse_args()
-
     if args.add:
         if args.poc:
             create_new_record("poc")
