@@ -109,12 +109,19 @@ def builder(line, _list_type):
     
 
 
-def parse_list(_list, _list_type, search):
+def parse_list(_list, _list_type, search, _option=None):
     """ Takes a list, and the element type, and prints any that match search """
     items = []
-    for element in _list:
-        if search.lower() in element.lower() or search == "":
-            items.append(builder(element, _list_type))
+    
+    if _option is not None:
+        for element in _list:
+            if int(element.split(";")[0]) == search:
+                items.append(builder(element, _list_type))
+        return items 
+    else:
+        for element in _list:
+            if search.lower() in element.lower() or search == "":
+                items.append(builder(element, _list_type))
     return items
 
 
@@ -330,12 +337,14 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-a", "--add", help="add data, requires -j or -p", action="store_true")
     parser.add_argument("-j", "--job", help="use the Job info", action="store_true")
-    parser.add_argument("-p", "--poc", help="use the POC info", action="store_true")
+    parser.add_argument("-p", "--poc", help="use the POC info", type=str, nargs='?', const=True, default=None)
     parser.add_argument("-s", "--search", help="SEARCH for", default="")
     parser.add_argument("-name", "--name", help="POC name", default="")
     parser.add_argument("-u", "--update", help="update data, requires -j or -p and record number", action="store_true")
-    parser.add_argument("-r", "--record", help="record number for update", default="")
+    parser.add_argument("-r", "--record", help="record number for update", type=int, nargs='?', const=True, default=None)
     parser.add_argument("-d", "--delete", help="delete data, requires -j or -p and record number", action="store_true")
+
+    
 
     args = parser.parse_args()
 
@@ -367,9 +376,12 @@ if __name__ == "__main__":
             print("Jobs\n", job, "\n")
         sys.exit(1)
     
-    if args.poc:
-        print(f"args = {args.search}", "\n")
-        for poc in parse_list(poc_list, "poc", args.search):
+    if args.poc is not None:
+        if args.poc == True:
+            poc_search = args.search
+        else:
+            poc_search = args.poc
+        for poc in parse_list(poc_list, "poc", poc_search):
             print("Person of Concerns\n", poc, "\n")
         sys.exit(1)
         
@@ -385,10 +397,19 @@ if __name__ == "__main__":
             print("No matches found")
         sys.exit(1)
 
-    if args.name:
-        for poc in parse_list(poc_list, "poc", args.name):
-            print("poc - ", poc, "\n")
-        for job in parse_list(job_list, "job", args.name):
-            print("job - ", job, "\n")
+    if args.record is not None:
+
+        if type(args.record) == bool and args.record == True:
+            print("arg was True")
+            for poc in parse_list(poc_list, "poc", ""):
+                print("poc - ", poc, "\n")
+            for job in parse_list(job_list, "job", ""):
+                print("job - ", job, "\n")
+        else:
+            for job in parse_list(job_list, "job", args.record, "record_number"):
+                print("Job\n", job, "\n")
+            for poc in parse_list(poc_list, "poc", args.record, "record_number"):
+                print("Person of Concern\n", poc, "\n")
+
         sys.exit(1)
-        
+
