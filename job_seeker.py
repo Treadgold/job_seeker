@@ -370,10 +370,10 @@ if __name__ == "__main__":
     if args.search:
         found = 0
         for job in parse_list(job_list, "job", args.search):
-            print(job, "\n")
+            print("Job\n", job, "\n")
             found += 1
         for poc in parse_list(poc_list, "poc", args.search):
-            print(poc, "\n")
+            print("Person of Concern\n", poc, "\n")
             found += 1
         if found == 0:
             print("No matches found")
