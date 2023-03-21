@@ -336,10 +336,9 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-a", "--add", help="add data, requires -j or -p", action="store_true")
-    parser.add_argument("-j", "--job", help="use the Job info", action="store_true")
+    parser.add_argument("-j", "--job", help="use the Job info", type=str, nargs='?', const=True, default=None)
     parser.add_argument("-p", "--poc", help="use the POC info", type=str, nargs='?', const=True, default=None)
     parser.add_argument("-s", "--search", help="SEARCH for", default="")
-    parser.add_argument("-name", "--name", help="POC name", default="")
     parser.add_argument("-u", "--update", help="update data, requires -j or -p and record number", action="store_true")
     parser.add_argument("-r", "--record", help="record number for update", type=int, nargs='?', const=True, default=None)
     parser.add_argument("-d", "--delete", help="delete data, requires -j or -p and record number", action="store_true")
@@ -353,6 +352,8 @@ if __name__ == "__main__":
             create_new_record("poc")
         elif args.job:
             create_new_record("job")
+        else:
+            print("Please specify -j for Job or -p for POC when using the --add option.")
         sys.exit(1)
             
     if args.delete:
@@ -369,10 +370,17 @@ if __name__ == "__main__":
             update_record("poc", args.record)
         elif args.job:
             update_record("job", args.record)
+        else:
+            print("Please specify -j for Job or -p for POC")
+            print("and -r <RECORD NUMBER> when using the --update option.")
         sys.exit(1)
         
-    if args.job:
-        for job in parse_list(job_list, "job", args.search):
+    if args.job is not None:
+        if args.job == True:
+            job_search = args.search
+        else:
+            job_search = args.job
+        for job in parse_list(job_list, "job", job_search):
             print("Jobs\n", job, "\n")
         sys.exit(1)
     
