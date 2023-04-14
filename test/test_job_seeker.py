@@ -138,9 +138,20 @@ class TestJobSeeker(unittest.TestCase):
         pass
 
     def test_create_new_record(self):
+        data = { 
+                "record_number": 27,
+                "title": "fred",
+                "active": "y",
+                "notes": "y", 
+                "company": "y",
+                "url": "y",
+                "poc_name": "y",
+                "last_contact": 20230413,
+                "first_contact": 20230413,
+                }
+        job = job_seeker.create_new_record("job", data)
+        self.assertTrue("fred" in job)
         
-        
-        pass
 
     def test_is_yes(self):
         self.assertTrue(job_seeker.is_yes("y"))

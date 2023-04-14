@@ -136,16 +136,18 @@ def string_to_list(data, sep = ';'):
     return [ e.strip() for e in data.split(sep) ]
 
 
-def create_new_record(job_or_poc):
+def create_new_record(job_or_poc, input_data):
     """ Collects user input based on either "job" or "poc" input, 
         and creates a new record in our data file
     """
-    data = {}
     fields = JOB_FIELDS if job_or_poc == "job" else POC_FIELDS
-    record_number = get_next_record_number(job_or_poc)
+    new_item = "; ".join([str(input_data[field]) for field in fields])
+    return new_item
 
+def get_user_data():
     # get the data from the user
     # loop through each field and get the data
+    #record_number = get_next_record_number(job_or_poc)
     for field in fields:
         if field == "record_number":
             data[field] = record_number
@@ -168,8 +170,9 @@ def create_new_record(job_or_poc):
                 else:
                     break
 
-    new_item = "; ".join([str(data[field]) for field in fields])
-        
+ 
+def insert_new_item(line, file):
+    """ Inserts the new line into the given file """ 
     # print out the new records values
     # and the type of record we are creating
     print(f"adding a new {job_or_poc},\n{new_item}")
