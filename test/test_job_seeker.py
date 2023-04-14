@@ -62,6 +62,15 @@ class TestJobSeeker(unittest.TestCase):
         with open(self.data_file, 'w') as f:
             f.write("\n\n\n#bogus line\ngood line\n\n\n")
 
+        self.job_record_file = os.path.join(self.test_dir.name, "jobs.txt")
+        with open(self.job_record_file, 'w') as f:
+            f.write("\n2; Automation Engineer; Yes; Excel, Python, Bash, VBA; sprint; sprint.com; Ulysees; 2023; 2023\n")
+            f.write("3; Junior Developer; Yes; PYthon, Javascript, Kubernetes, Docker; localcompany; local.comp.com; James Battersey; 2023; 2023")
+            f.write("4; Linux Server Admin; Yes; Arch, Redhat, NGIX, docker; Company number 7; comp7.com; Martin Freeman; 20230314; 20230112\n")
+            f.write("5; LEad Deve; Yes; Python; Happy Cow Dev Ltd; HCDL; Julian Bishop; 2023; 2023\n")
+            f.write("6; Mister-Programmer-guy; Yes; Just the business; DolphinExperience; DE.com; Haley; 20230321; 20230321\n")
+
+
     def tearDown(self):
         self.test_dir.cleanup()
 
@@ -152,6 +161,9 @@ class TestJobSeeker(unittest.TestCase):
         job = job_seeker.create_new_record("job", data)
         self.assertTrue("fred" in job)
         
+    def test_get_next_record_number(self):
+        next_record_number = job_seeker.get_next_record_number(self.job_record_file)
+        self.assertTrue(next_record_number == 7)
 
     def test_is_yes(self):
         self.assertTrue(job_seeker.is_yes("y"))
