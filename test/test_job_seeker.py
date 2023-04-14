@@ -10,6 +10,28 @@ from datetime import datetime as dt
 
 import job_seeker
 
+JOB_FIELDS = [
+    "record_number",
+    "title",
+    "active",
+    "notes",
+    "company",
+    "url",
+    "poc_name",
+    "last_contact",
+    "first_contact"
+]
+
+POC_FIELDS = [
+    "record_number",
+    "name",
+    "company",
+    "phone",
+    "email",
+    "first_contact",
+    "last_contact"
+]
+
 class TestJobSeeker(unittest.TestCase):
 
     def setUp(self):
@@ -60,7 +82,10 @@ class TestJobSeeker(unittest.TestCase):
         self.test_dir   = tempfile.TemporaryDirectory()
         self.data_file  = os.path.join(self.test_dir.name, "data.txt")
         with open(self.data_file, 'w') as f:
-            f.write("\n\n\n#bogus line\ngood line\n\n\n")
+            f.write("\n\n\n#bogus line\ngood line\n\n\nBrian; 555-555-5555\n")
+            
+        self.test_list_from_file = ["2; Automation Engineer; Yes; Excel, Python, Bash, VBA; sprint; sprint.com; Ulysees; 2023; 2023", "3; Junior Developer; Yes; PYthon, Javascript, Kubernetes, Docker; localcompany; local.comp.com; James Battersey; 2023; 2023"]
+        
 
         self.job_record_file = os.path.join(self.test_dir.name, "jobs.txt")
         with open(self.job_record_file, 'w') as f:
@@ -69,7 +94,16 @@ class TestJobSeeker(unittest.TestCase):
             f.write("4; Linux Server Admin; Yes; Arch, Redhat, NGIX, docker; Company number 7; comp7.com; Martin Freeman; 20230314; 20230112\n")
             f.write("5; LEad Deve; Yes; Python; Happy Cow Dev Ltd; HCDL; Julian Bishop; 2023; 2023\n")
             f.write("6; Mister-Programmer-guy; Yes; Just the business; DolphinExperience; DE.com; Haley; 20230321; 20230321\n")
+            
+        self.poc_record_file = os.path.join(self.test_dir.name, "pocs.txt")
+        with open(self.poc_record_file, 'w') as f:
+            f.write("\n1; Frank Green Zappa; United Music Federation; 0225 666 444; zappa@UMF.com; 2023; 2023\n")
+            f.write("\n2; Killian; Run Fast; 8666544646; kill@run.com; 2023; 2023\n")
+            f.write("\n3; Shannon Docherty; JustInTime; 545488844; shannon@JIT.com; 2023; 2023\n")
+            f.write("\n4; Jason Bourne; Blackrock; 555-898-9944; jason@blackrock.quiet.com; 20070305; 20220118\n")
 
+        
+        
 
     def tearDown(self):
         self.test_dir.cleanup()
@@ -140,10 +174,15 @@ class TestJobSeeker(unittest.TestCase):
        
     def test_list_from_file(self):
         l = job_seeker.list_from_file(self.data_file)
-        self.assertTrue(len(l) == 1)
+        self.assertTrue(len(l) == 2)
         self.assertTrue(l[0] == "good line") 
+        self.assertTrue(l[1] == "Brian; 555-555-5555")
+        
       
     def test_parse_list(self):
+        _list = job_seeker.parse_list(self.test_list_from_file, "poc", "Sprint")
+        self.assertTrue(len(_list) == 1, msg = {len(_list)})
+        self.assertTrue(_list[0].__str__() == 'record_number: 2\nname: Automation Engineer\ncompany: Yes\nphone: Excel, Python, Bash, VBA\nemail: sprint\nfirst_contact: sprint.com\nlast_contact: Ulysees')
         pass
 
     def test_create_new_record(self):
@@ -170,3 +209,29 @@ class TestJobSeeker(unittest.TestCase):
         self.assertTrue(job_seeker.is_yes("Yes"))
         self.assertFalse(job_seeker.is_yes("No"))
         self.assertFalse(job_seeker.is_yes("n"))
+
+class TestJobClass(unittest.TestCase):
+    def test_job_init(self):
+        job_data = {
+            'record_number': 1,
+            'title': 'Software Engineer',
+            'company': 'ABC Corp',
+            'notes': 'Need to follow up on this job lead',
+            'first_contact': '20220701',
+            'last_contact': '20220701',
+            'poc_name': 'John Doe',
+            'active': 'y',
+            'url' : 'www.bus.com'
+            
+        }
+        job = job_seeker.Job(job_data=job_data)
+        self.assertEqual(job.title, 'Software Engineer')
+        self.assertEqual(job.company, 'ABC Corp')
+        self.assertEqual(job.notes, 'Need to follow up on this job lead')
+        self.assertEqual(job.last_contact, '20220701')
+        self.assertEqual(job.poc_name, 'John Doe')
+        self.assertEqual(job.record_number, 1)
+        self.assertEqual(job.active, 'y')
+        self.assertEqual(job.url, 'www.bus.com')
+        self.assertEqual(job.first_contact, '20220701')
+
