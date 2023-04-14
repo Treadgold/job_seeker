@@ -209,32 +209,18 @@ def insert_new_item(line, file):
     return()
 
 
-def get_next_record_number(job_or_poc):
+def get_next_record_number(file):
     """ Get the next record number for a job or POC """
-
-     # Check whether we are working with job or POC records
-     # and get the list of records from the appropriate file
-    if job_or_poc == "job":
-        lines = list_from_file(os.path.join(datadir, job_file))
-        records = []
-        for line in lines:
-            records.append(builder(line, "job"))
-    elif job_or_poc == "poc":
-        lines = list_from_file(os.path.join(datadir, poc_file))
-        records = []
-        for line in lines:
-            records.append(builder(line, "poc"))
-
-    # Iterate through each record in the records list
-    # and get the record number for each record
     record_numbers = []
-    for record in records:
-        record_numbers.append(int(record.record_number))
-
-    # Get the max record number from the list of record numbers
-    # and return the max record number + 1
+    with open(file, 'r') as f:
+        for line in f:
+            line = line.strip()
+            if ';' in line:
+                data = line.split(";")
+                record_numbers.append(int(data[0].strip()))
     max_record_number = max(record_numbers, default=0)
     return max_record_number + 1
+
 
 
 def update_record(job_or_poc, record_number):
