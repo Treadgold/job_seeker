@@ -176,7 +176,6 @@ def get_user_data(fields):
                 continue
             else:
                 break
-    print(data)
     return data
 
 
