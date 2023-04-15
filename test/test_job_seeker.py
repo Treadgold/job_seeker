@@ -281,10 +281,16 @@ class TestJobSeeker(unittest.TestCase):
             self.assertTrue(lines[-1] == _string, msg = {lines[-1], _string})        
     
     def test_delete_record(self):
-        raise NotImplementedError
+        with patch('builtins.input', side_effect=["y"]):
+            job_seeker.delete_record(4, self.poc_record_file, 'poc')
+        with open (self.poc_record_file) as f:
+            lines = f.readlines()
+            self.assertTrue(lines[-1] == "3; Shannon Docherty; JustInTime; 545488844; shannon@JIT.com; 2023; 2023") 
     
     def test_append_to_file(self):
-        raise NotImplementedError
-    
+        job_seeker.append_to_file(self.test_line_job, self.job_record_file)
+        with open (self.job_record_file) as f:
+            lines = f.readlines()
+            self.assertTrue(lines[-1] == self.test_line_job + "\n")
     
     
