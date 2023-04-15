@@ -22,7 +22,7 @@ JOB_FIELDS = [
     "poc_name",
     "last_contact",
     "first_contact"
-]
+    ]
 
 POC_FIELDS = [
     "record_number",
@@ -32,7 +32,7 @@ POC_FIELDS = [
     "email",
     "first_contact",
     "last_contact"
-]
+    ]
 
 
 class Job:
