@@ -2,7 +2,7 @@
 # name:     job_seeker.py
 # version:  0.1.2
 # date:     20230316
-# author:   Leam Hall, Michael Treadgold
+# authors:   Leam Hall, Michael Treadgold
 # desc:     Track data on job applications
 
 import argparse
@@ -135,7 +135,7 @@ def append_to_file(line, filename):
 
         
 def string_to_list(data, sep = ';'):
-    """ Takes a sep separated string and converts it to a list """ 
+    """ Takes a ; separated string and converts it to a list """ 
     return [ e.strip() for e in data.split(sep) ]
 
 def dict_to_string(data, sep = ';'):
