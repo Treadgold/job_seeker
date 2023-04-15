@@ -143,20 +143,25 @@ def dict_to_string(data, sep = ';'):
     return sep.join([str(e) for e in data.values()])
 
 def create_new_record(job_or_poc, file_path):
-    """ Collects user input based on either "job" or "poc" input, 
-        and creates a new record in our data file
-    """
-     
+    """ This function manages the creation of a new record """
     fields = JOB_FIELDS if job_or_poc == "job" else POC_FIELDS
+    # this is a little hacky, we are passing our new record_number
+    # as the first field name so we can use that when we build the data
     fields[0] = get_next_record_number(file_path)    
+    # get the data from the user
     input_data = get_user_data(fields)    
+    # convert the data to a string
     new_item = dict_to_string(input_data)
+    # append the string to the file as a new line
     insert_new_item(new_item, file_path, job_or_poc)
 
 def get_user_data(fields):
-    # get the data from the user
-    # loop through each field and get the data
-    
+    """ get the data from the user
+        loop through each field and get the data
+        return a dict of the fields and data
+    """
+    # the record number is passes in as the first field
+    # instead of the word "record_number"
     data = {'record_number': fields[0]}
     for field in fields[1:]:
         while True:
