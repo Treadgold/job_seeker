@@ -243,8 +243,7 @@ class TestJobSeeker(unittest.TestCase):
                             'last_contact'  : '20230413',
                             'first_contact' : '20230413',
                             }
-        date = dt.now()
-        date = "{}{:0>2}{:0>2}".format(date.year, date.month, date.day)
+        
         with patch('builtins.input', side_effect=input_values):
             self.maxDiff = None
             self.assertEqual(job_seeker.get_user_data(fields), correct_output)
