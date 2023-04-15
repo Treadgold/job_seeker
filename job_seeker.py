@@ -38,6 +38,7 @@ POC_FIELDS = [
 class Job:
     """Stores the job req data"""
     def __init__(self, job_data={}):
+        
         for field in JOB_FIELDS:
             setattr(self, field, job_data.get(field, None))
 
@@ -93,14 +94,15 @@ def convert_date(date):
 
 
 def builder(line, _list_type):
-    
+    print(_list_type)
+    print(line)
     _list = string_to_list(line)
     
     if _list_type == "job":
         _fields = JOB_FIELDS
     else:
         _fields = POC_FIELDS
-        
+    
     data = {field: _list[idx] for idx, field in enumerate(_fields)}
     if _list_type == "job":
         return Job(data)
@@ -110,7 +112,9 @@ def builder(line, _list_type):
 
 
 def parse_list(_list, _list_type, search, _option=None):
-    """ Takes a list, and the element type, and prints any that match search """
+    """ Takes a list of strings, and the element to search, and returns a list of RECORDS that match search term"""
+    """ If _option is not None, then we are searching for a specific record number"""
+    """ If _option is None, then we return the entire list of records"""
     items = []
     
     if _option is not None:
@@ -135,53 +139,58 @@ def string_to_list(data, sep = ';'):
     """ Takes a sep separated string and converts it to a list """ 
     return [ e.strip() for e in data.split(sep) ]
 
+def dict_to_string(data, sep = ';'):
+    """ Takes a dict and converts it to a sep separated string """ 
+    return sep.join([str(e) for e in data.values()])
 
-def create_new_record(job_or_poc, input_data):
+def create_new_record(job_or_poc, file_path):
     """ Collects user input based on either "job" or "poc" input, 
         and creates a new record in our data file
     """
+     
     fields = JOB_FIELDS if job_or_poc == "job" else POC_FIELDS
-    new_item = "; ".join([str(input_data[field]) for field in fields])
-    return new_item
+    fields[0] = get_next_record_number(file_path)    
+    input_data = get_user_data(fields)    
+    new_item = dict_to_string(input_data)
+    insert_new_item(new_item, file_path, job_or_poc)
 
-def get_user_data():
+def get_user_data(fields):
     # get the data from the user
     # loop through each field and get the data
-    #record_number = get_next_record_number(job_or_poc)
-    for field in fields:
-        if field == "record_number":
-            data[field] = record_number
-        else:
-            while True:
-                if field == "first_contact" or field == "last_contact":
-                    data[field] = convert_date(dt.now())
-                    print(f"(press enter to accept {data[field]} as {field})")
-                    _input = input("or provide a date in YYYYMMDD format :")
-                    if _input != "":
-                        data[field] = _input
-                    break
-                data[field] = input("{}: ".format(field))
-                if data[field] == "":
-                    data[field] = "Null"
-                    break
-                elif ";" in data[field]:
-                    print("No semicolons allowed")
-                    continue
-                else:
-                    break
+    
+    data = {'record_number': fields[0]}
+    for field in fields[1:]:
+        while True:
+            if field == "first_contact" or field == "last_contact":
+                data[field] = convert_date(dt.now())
+                print(f"(press enter to accept {data[field]} as {field})")
+                _input = input("or provide a date in YYYYMMDD format :")
+                if _input != "":
+                    data[field] = _input
+                break
+            data[field] = input("{}: ".format(field))
+            if data[field] == "":
+                data[field] = "Null"
+                break
+            elif ";" in data[field]:
+                print("No semicolons allowed")
+                continue
+            else:
+                break
+    return data
 
- 
-def insert_new_item(line, file):
+
+
+def insert_new_item(line, file, job_or_poc):
     """ Inserts the new line into the given file """ 
     # print out the new records values
     # and the type of record we are creating
-    print(f"adding a new {job_or_poc},\n{new_item}")
-    _answer = " "
-    # Ask the user if they want to add the job
+    #print(f"adding a new {job_or_poc},\n{line}")
+    # Ask the user if they want to add the job or poc
     while True:
-        print(f"Updated {job_or_poc}:")
-        print(new_item)
-        _answer = input("Update this Record? (y/n): ")
+        print(f"New {job_or_poc} defined:")
+        print(line)
+        _answer = input(f"Do you want to add this {job_or_poc}? (y/n): ")
         if is_yes(_answer) and _answer != "":
             _answer = True
             break
@@ -195,10 +204,10 @@ def insert_new_item(line, file):
             # Check if POC or Job
             if job_or_poc == "job":
                 # Append the new job to the job file using the append_to_file function
-                append_to_file(new_item, os.path.join(datadir, job_file))
+                append_to_file(line, file)
             elif job_or_poc == "poc":
                 # Append the new poc to the poc file using the append_to_file function
-                append_to_file(new_item, os.path.join(datadir, poc_file))
+                append_to_file(line, file)
             # confirm the new record was added
             print(f"New {job_or_poc} added to database")
         except:
@@ -284,26 +293,27 @@ def update_record(job_or_poc, record_number):
         print("Update cancelled")
 
 
-def delete_record(job_or_poc, record_number):
+def delete_record(record_number, file, job_or_poc):
     """ Delete an existing job or POC record """
-    filepath = os.path.join(datadir, job_file) if job_or_poc == "job" else os.path.join(datadir, poc_file)
     
-    records = list_from_file(filepath)
-
+    records = list_from_file(file)
+    line_to_delete = None
     for i, line in enumerate(records):
-        if line.startswith(record_number):
+        if line.startswith(str(record_number)):
+            line_to_delete = i
             break
-    else:
+    
+    if line_to_delete is None:
         print(f"No {job_or_poc} found with record number {record_number}")
         return
 
-    deleted_record = records[i]
+    deleted_record = records[line_to_delete]
     print(f"Deleting {job_or_poc}:")
     print(deleted_record)
 
     if is_yes(input(f"Delete this {job_or_poc}?")):
-        del records[i]
-        with open(filepath, 'w') as f:
+        del records[line_to_delete]
+        with open(file, 'w') as f:
             f.write("\n".join(records))
         print(f"{job_or_poc.capitalize()} deleted")
     else:
@@ -315,6 +325,10 @@ if __name__ == "__main__":
     datadir     = "data"
     job_file    = "jobs.txt"
     poc_file    = "pocs.txt"
+    
+    job_file_path = os.path.join(datadir, job_file)
+    poc_file_path = os.path.join(datadir, poc_file)
+    
     try:
         poc_list = list_from_file(os.path.join(datadir, poc_file))
         job_list = list_from_file(os.path.join(datadir, job_file))
@@ -338,18 +352,18 @@ if __name__ == "__main__":
 
     if args.add:
         if args.poc:
-            create_new_record("poc")
+            create_new_record("poc", poc_file_path)
         elif args.job:
-            create_new_record("job")
+            create_new_record("job", job_file_path)
         else:
             print("Please specify -j for Job or -p for POC when using the --add option.")
         sys.exit(1)
             
     if args.delete:
         if args.poc:
-            delete_record("poc", args.record)
+            delete_record(args.record, poc_file_path, 'poc')
         elif args.job:
-            delete_record("job", args.record)
+            delete_record(args.record, job_file_path, 'job')
         else:
             print("Please specify -j for Job or -p for POC when using the --delete option.")
         sys.exit(1)

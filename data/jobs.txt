@@ -1,8 +1,2 @@
-2; Automation Engineer; Yes; Excel, Python, Bash, VBA; sprint; sprint.com; Ulysees; 2023; 2023
-3; Junior Developer; Yes; PYthon, Javascript, Kubernetes, Docker; localcompany; local.comp.com; James Battersey; 2023; 2023
 
-4; Linux Server Admin; Yes; Arch, Redhat, NGIX, docker; Company number 7; comp7.com; Martin Freeman; 20230314; 20230112
-
-5; LEad Deve; Yes; Python; Happy Cow Dev Ltd; HCDL; Julian Bishop; 2023; 2023
-
-6; Mister-Programmer-guy; Yes; Just the business; DolphinExperience; DE.com; Haley; 20230321; 20230321
+1;Pro Skater;Yes;James was nice, ask for him;redbull;rb.com;James Compton;20230415;20230415
