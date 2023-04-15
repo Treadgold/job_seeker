@@ -86,8 +86,9 @@ class TestJobSeeker(unittest.TestCase):
             f.write("\n\n\n#bogus line\ngood line\n\n\nBrian; 555-555-5555\n")
             
         self.test_list_from_file = ["2; Automation Engineer; Yes; Excel, Python, Bash, VBA; sprint; sprint.com; Ulysees; 2023; 2023", "3; Junior Developer; Yes; PYthon, Javascript, Kubernetes, Docker; localcompany; local.comp.com; James Battersey; 2023; 2023"]
-        self.test_line = "3; Junior Developer; Yes; PYthon, Javascript, Kubernetes, Docker; localcompany; local.comp.com; James Battersey; 2023; 2023"
-
+        self.test_line_job = "9; Junior Developer; Yes; PYthon, Javascript, Kubernetes, Docker; localcompany; local.comp.com; James Battersey; 2023; 2023"
+        self.test_line_poc = "12; Killian; Run Fast; 8666544646; kill@run.com; 2023; 2023"
+        
         self.job_record_file = os.path.join(self.test_dir.name, "jobs.txt")
         with open(self.job_record_file, 'w') as f:
             f.write("\n2; Automation Engineer; Yes; Excel, Python, Bash, VBA; sprint; sprint.com; Ulysees; 2023; 2023\n")
@@ -223,17 +224,16 @@ class TestJobSeeker(unittest.TestCase):
                         "20230413",
                         "20230413",
                         ]
-        fields = [
-            7,
-            "title",
-            "active",
-            "notes",
-            "company",
-            "url",
-            "poc_name",
-            "last_contact",
-            "first_contact"
-            ]
+        fields = [  7,
+                    "title",
+                    "active",
+                    "notes",
+                    "company",
+                    "url",
+                    "poc_name",
+                    "last_contact",
+                    "first_contact"
+                    ]
         correct_output = {  'record_number' : 7,
                             'title'         : 'input_1',
                             'active'        : 'input_2',
@@ -253,15 +253,32 @@ class TestJobSeeker(unittest.TestCase):
     def test_insert_new_item(self):
         _inputs = ["y"]
         with patch('builtins.input', side_effect=_inputs):
-            job_seeker.insert_new_item(self.test_line, self.job_record_file, "job")
+            job_seeker.insert_new_item(self.test_line_job, self.job_record_file, "job")
         with open (self.job_record_file) as f:
             lines = f.readlines()
-            self.assertTrue(lines[-1] == self.test_line + "\n")
+            self.assertTrue(lines[-1] == self.test_line_job + "\n")
         
+        with patch('builtins.input', side_effect=_inputs):
+            job_seeker.insert_new_item(self.test_line_poc, self.poc_record_file, "poc")
+        with open (self.poc_record_file) as f:
+            lines = f.readlines()
+            self.assertTrue(lines[-1] == self.test_line_poc + "\n")
         
-    
     def test_update_record(self):
-        raise NotImplementedError
+        _input = ["Harry Potter",
+                  "company five",
+                  "555-865865",
+                  "harry_potter@five.com",
+                  "20230401",
+                  "20230112",
+                  "y",
+                ]
+        _string = "4; Harry Potter; company five; 555-865865; harry_potter@five.com; 20230401; 20230112"          
+        with patch('builtins.input', side_effect=_input):
+            job_seeker.update_record('poc', 4, self.poc_record_file)
+        with open (self.poc_record_file) as f:
+            lines = f.readlines()
+            self.assertTrue(lines[-1] == _string, msg = {lines[-1], _string})        
     
     def test_delete_record(self):
         raise NotImplementedError
