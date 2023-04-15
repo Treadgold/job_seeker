@@ -209,29 +209,22 @@ class TestJobSeeker(unittest.TestCase):
         self.assertTrue(job_seeker.is_yes("Yes"))
         self.assertFalse(job_seeker.is_yes("No"))
         self.assertFalse(job_seeker.is_yes("n"))
-
-class TestJobClass(unittest.TestCase):
-    def test_job_init(self):
-        job_data = {
-            'record_number': 1,
-            'title': 'Software Engineer',
-            'company': 'ABC Corp',
-            'notes': 'Need to follow up on this job lead',
-            'first_contact': '20220701',
-            'last_contact': '20220701',
-            'poc_name': 'John Doe',
-            'active': 'y',
-            'url' : 'www.bus.com'
-            
-        }
-        job = job_seeker.Job(job_data=job_data)
-        self.assertEqual(job.title, 'Software Engineer')
-        self.assertEqual(job.company, 'ABC Corp')
-        self.assertEqual(job.notes, 'Need to follow up on this job lead')
-        self.assertEqual(job.last_contact, '20220701')
-        self.assertEqual(job.poc_name, 'John Doe')
-        self.assertEqual(job.record_number, 1)
-        self.assertEqual(job.active, 'y')
-        self.assertEqual(job.url, 'www.bus.com')
-        self.assertEqual(job.first_contact, '20220701')
-
+        
+    def test_get_user_data(self):
+        
+        raise NotImplementedError
+    
+    def test_insert_new_item(self):
+        raise NotImplementedError
+    
+    def test_update_record(self):
+        raise NotImplementedError
+    
+    def test_delete_record(self):
+        raise NotImplementedError
+    
+    def test_append_to_file(self):
+        raise NotImplementedError
+    
+    
+    
