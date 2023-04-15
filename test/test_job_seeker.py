@@ -86,7 +86,7 @@ class TestJobSeeker(unittest.TestCase):
             f.write("\n\n\n#bogus line\ngood line\n\n\nBrian; 555-555-5555\n")
             
         self.test_list_from_file = ["2; Automation Engineer; Yes; Excel, Python, Bash, VBA; sprint; sprint.com; Ulysees; 2023; 2023", "3; Junior Developer; Yes; PYthon, Javascript, Kubernetes, Docker; localcompany; local.comp.com; James Battersey; 2023; 2023"]
-        
+        self.test_line = "3; Junior Developer; Yes; PYthon, Javascript, Kubernetes, Docker; localcompany; local.comp.com; James Battersey; 2023; 2023"
 
         self.job_record_file = os.path.join(self.test_dir.name, "jobs.txt")
         with open(self.job_record_file, 'w') as f:
@@ -221,7 +221,8 @@ class TestJobSeeker(unittest.TestCase):
                         "input_5",
                         "input_6",
                         "20230413",
-                        "20230413"]
+                        "20230413",
+                        ]
         fields = [
             7,
             "title",
@@ -250,7 +251,14 @@ class TestJobSeeker(unittest.TestCase):
         
     
     def test_insert_new_item(self):
-        raise NotImplementedError
+        _inputs = ["y"]
+        with patch('builtins.input', side_effect=_inputs):
+            job_seeker.insert_new_item(self.test_line, self.job_record_file, "job")
+        with open (self.job_record_file) as f:
+            lines = f.readlines()
+            self.assertTrue(lines[-1] == self.test_line + "\n")
+        
+        
     
     def test_update_record(self):
         raise NotImplementedError
