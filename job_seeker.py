@@ -94,8 +94,7 @@ def convert_date(date):
 
 
 def builder(line, _list_type):
-    print(_list_type)
-    print(line)
+    """ Takes a line from a file and returns a Job or POC object """
     _list = string_to_list(line)
     
     if _list_type == "job":
@@ -232,16 +231,16 @@ def get_next_record_number(file):
 
 
 
-def update_record(job_or_poc, record_number):
+def update_record(job_or_poc, record_number, file):
     """ Update an existing job or POC record """
     updated_data = {}
     fields = JOB_FIELDS if job_or_poc == "job" else POC_FIELDS
-    filepath = os.path.join(datadir, job_file) if job_or_poc == "job" else os.path.join(datadir, poc_file)
+    filepath = file
 
     records = list_from_file(filepath)
 
     for i, line in enumerate(records):
-        if line.startswith(record_number):
+        if line.startswith(str(record_number)):
             current_record = string_to_list(line)
             break
     else:
@@ -370,9 +369,9 @@ if __name__ == "__main__":
 
     if args.update:
         if args.poc:
-            update_record("poc", args.record)
+            update_record("poc", args.record, poc_file_path)
         elif args.job:
-            update_record("job", args.record)
+            update_record("job", args.record, job_file_path)
         else:
             print("Please specify -j for Job or -p for POC")
             print("and -r <RECORD NUMBER> when using the --update option.")

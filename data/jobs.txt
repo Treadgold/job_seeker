@@ -1,2 +1,1 @@
-
-1;Pro Skater;Yes;James was nice, ask for him;redbull;rb.com;James Compton;20230415;20230415
+1; NExt.JS dev; Yes; Might need to focus more on Front end than what you're used to.; redbull; Redbull.com/jobs/37863; James Marshall; 20230415; 20230415
