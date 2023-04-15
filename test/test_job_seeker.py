@@ -4,6 +4,7 @@
 # author  :	Michael Treadgold
 # desc    :	Test job_seeker.py
 import unittest
+from unittest.mock import patch
 import os.path
 import tempfile
 from datetime import datetime as dt
@@ -185,7 +186,7 @@ class TestJobSeeker(unittest.TestCase):
         self.assertTrue(_list[0].__str__() == 'record_number: 2\nname: Automation Engineer\ncompany: Yes\nphone: Excel, Python, Bash, VBA\nemail: sprint\nfirst_contact: sprint.com\nlast_contact: Ulysees')
         pass
 
-    def test_create_new_record(self):
+    def test_insert_new_item(self):
         data = { 
                 "record_number": 27,
                 "title": "fred",
@@ -197,8 +198,10 @@ class TestJobSeeker(unittest.TestCase):
                 "last_contact": 20230413,
                 "first_contact": 20230413,
                 }
-        job = job_seeker.create_new_record("job", data)
-        self.assertTrue("fred" in job)
+        job_seeker.insert_new_item(data, self.job_record_file, "job")
+        with open(self.job_record_file) as f:
+            lines = f.readlines()
+            self.assertTrue(lines[-1] == "27; fred; y; y; y; y; y; 20230413; 20230413\n")
         
     def test_get_next_record_number(self):
         next_record_number = job_seeker.get_next_record_number(self.job_record_file)
@@ -211,8 +214,41 @@ class TestJobSeeker(unittest.TestCase):
         self.assertFalse(job_seeker.is_yes("n"))
         
     def test_get_user_data(self):
+        input_values = ['7',
+                        'input_1',
+                        'input_2',
+                        'input_3',
+                        "input_4",
+                        "input_5",
+                        "input_6"
+                        "20230413",
+                        "20230413"]
+        fields = [
+            7,
+            "title",
+            "active",
+            "notes",
+            "company",
+            "url",
+            "poc_name",
+            "last_contact",
+            "first_contact"
+            ]
+        correct_output = {  'record_number' : 7,
+                            'title'         : 'input_1',
+                            'active'        : 'input_2',
+                            'notes'         : 'input_3',
+                            'company'       : 'input_4',
+                            'url'           : 'input_5',
+                            'poc_name'      : 'input_6',
+                            'last_contact'  : '20230413',
+                            'first_contact' : '20230413',
+                            }
+        date = dt.now()
+        date = "{}{:0>2}{:0>2}".format(date.year, date.month, date.day)
+        with patch('builtins.input', side_effect=input_values):
+            self.assertEqual(job_seeker.get_user_data(fields), correct_output)
         
-        raise NotImplementedError
     
     def test_insert_new_item(self):
         raise NotImplementedError
