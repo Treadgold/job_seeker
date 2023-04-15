@@ -214,13 +214,12 @@ class TestJobSeeker(unittest.TestCase):
         self.assertFalse(job_seeker.is_yes("n"))
         
     def test_get_user_data(self):
-        input_values = ['7',
-                        'input_1',
+        input_values = ['input_1',
                         'input_2',
                         'input_3',
                         "input_4",
                         "input_5",
-                        "input_6"
+                        "input_6",
                         "20230413",
                         "20230413"]
         fields = [
@@ -247,6 +246,7 @@ class TestJobSeeker(unittest.TestCase):
         date = dt.now()
         date = "{}{:0>2}{:0>2}".format(date.year, date.month, date.day)
         with patch('builtins.input', side_effect=input_values):
+            self.maxDiff = None
             self.assertEqual(job_seeker.get_user_data(fields), correct_output)
         
     
