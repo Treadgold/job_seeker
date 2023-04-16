@@ -10,7 +10,7 @@ Tracks job applications and contacts
 - Given -j, print out all Jobs
 - Given -p, prints out all Points of Contact
 - Given -a, and -j or -p, and data, adds to the end of the file, you will be prompted to input details.
-- Given -s <string>, searches and prints any job or poc that matches <string>
+- Given -s 'string', searches and prints any job or poc that matches 'string'
 - Given -u and (-j or -p) and -r <record number> allows you to update a record
 - Given -d and (-r or -p) and -r <record number> allows you to delete a record
 
