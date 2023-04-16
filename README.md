@@ -67,6 +67,8 @@ first_contact: 20230112
 ```
 
 ### Update record 8
+
+```
 .\job_seeker.py -p -u -r 8
 Current poc:
 8; Jason Manford; JuggleBuddies Annonymous; 55/884/479'; juncle.right@r.com; 20230321; 20230321
@@ -86,6 +88,6 @@ Updated poc:
 8; Jason Minstrel; International Pancake House; 555-886-9889; Jason.Minstrel@HOP.com; 20230321; 20230416
 Update this Record? (y/n): y
 Poc updated
-
+```
 
  
