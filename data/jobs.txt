@@ -1,1 +1,2 @@
 1; NExt.JS dev; Yes; Might need to focus more on Front end than what you're used to.; redbull; Redbull.com/jobs/37863; James Marshall; 20230415; 20230415
+2;Team Lead;yes;Python, Kubernetes, Docker, AWS;Helical;Helical.com/jobs/977698;Kyle;20230416;20230416

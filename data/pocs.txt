@@ -4,4 +4,4 @@
 4; Jason Bourne; Blackrock; 555-898-9944; jason@blackrock.quiet.com; 20070305; 20220118
 5; Hary Styles; Just Drink It; 055-68854-4456; Hary@JDI.com; 2023; 2021
 6; Val; Jones; 555466654; val@thehunt.com; 20230315; 20230320
-8; Jason Manford; JuggleBuddies Annonymous; 55/884/479'; juncle.right@r.com; 20230321; 20230321
+8; Jason Minstrel; International Pancake House; 555-886-9889; Jason.Minstrel@HOP.com; 20230321; 20230416

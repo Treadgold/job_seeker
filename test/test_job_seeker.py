@@ -3,11 +3,16 @@
 # date    :	20230317
 # author  :	Michael Treadgold
 # desc    :	Test job_seeker.py
+import sys
+import io
+sys.argv.append('-b')
+
 import unittest
 from unittest.mock import patch
 import os.path
 import tempfile
 from datetime import datetime as dt
+
 
 import job_seeker
 
@@ -85,7 +90,9 @@ class TestJobSeeker(unittest.TestCase):
         with open(self.data_file, 'w') as f:
             f.write("\n\n\n#bogus line\ngood line\n\n\nBrian; 555-555-5555\n")
             
-        self.test_list_from_file = ["2; Automation Engineer; Yes; Excel, Python, Bash, VBA; sprint; sprint.com; Ulysees; 2023; 2023", "3; Junior Developer; Yes; PYthon, Javascript, Kubernetes, Docker; localcompany; local.comp.com; James Battersey; 2023; 2023"]
+        self.test_list_from_file = ["2; Automation Engineer; Yes; Excel, Python, Bash, VBA; sprint; sprint.com; Ulysees; 2023; 2023",
+                                    "3; Junior Developer; Yes; PYthon, Javascript, Kubernetes, Docker; localcompany; local.comp.com; James Battersey; 2023; 2023",
+                                    ]
         self.test_line_job = "9; Junior Developer; Yes; PYthon, Javascript, Kubernetes, Docker; localcompany; local.comp.com; James Battersey; 2023; 2023"
         self.test_line_poc = "12; Killian; Run Fast; 8666544646; kill@run.com; 2023; 2023"
         
@@ -183,9 +190,9 @@ class TestJobSeeker(unittest.TestCase):
       
     def test_parse_list(self):
         _list = job_seeker.parse_list(self.test_list_from_file, "poc", "Sprint")
-        self.assertTrue(len(_list) == 1, msg = {len(_list)})
+        self.assertTrue(len(_list) == 1)
         self.assertTrue(_list[0].__str__() == 'record_number: 2\nname: Automation Engineer\ncompany: Yes\nphone: Excel, Python, Bash, VBA\nemail: sprint\nfirst_contact: sprint.com\nlast_contact: Ulysees')
-        pass
+
 
     def test_insert_new_item(self):
         data = { 
@@ -278,7 +285,7 @@ class TestJobSeeker(unittest.TestCase):
             job_seeker.update_record('poc', 4, self.poc_record_file)
         with open (self.poc_record_file) as f:
             lines = f.readlines()
-            self.assertTrue(lines[-1] == _string, msg = {lines[-1], _string})        
+            self.assertTrue(lines[-1] == _string)        
     
     def test_delete_record(self):
         with patch('builtins.input', side_effect=["y"]):
@@ -294,3 +301,18 @@ class TestJobSeeker(unittest.TestCase):
             self.assertTrue(lines[-1] == self.test_line_job + "\n")
     
     
+if __name__ == '__main__':
+    # Create a StringIO object to capture the output
+    mock_stdout = io.StringIO()
+
+    # Redirect stdout to the StringIO object
+    sys.stdout = mock_stdout
+
+    # Create a custom TextTestRunner with the stream argument set to the StringIO object
+    runner = unittest.TextTestRunner(stream=mock_stdout)
+
+    # Run the tests with the custom TextTestRunner
+    unittest.main(testRunner=runner)
+
+    # Reset stdout back to the original value
+    sys.stdout = sys.__stdout__
